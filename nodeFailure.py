@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from classes import Chord, Node, Utils
-from tqdm import tqdm
 
 
 #General Configuration
@@ -40,13 +39,13 @@ for safety_parameter in range(safety_parameter_max):
 
 
     # Inserting data
-    print('Inserting data ...')
     df = pd.read_csv('data/data.csv', low_memory=False)
-    for index, row in tqdm(df.iterrows(), total=number_of_data):
+    for idx, row in df.iterrows():
         starting_node = 0
         myChord.insertData(row, starting_node)
-        if index == number_of_data:
+        if idx == number_of_data:
             break
+        Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
 
 
     for fail_number in range(number_of_fails):
@@ -54,9 +53,9 @@ for safety_parameter in range(safety_parameter_max):
         # Node failure 
         nodes[fail_number].hasFailed = True
         successfull_lookups = 0
-        for index, row in df.iterrows():
+        for idx, row in df.iterrows():
 
-            if index==number_of_lookup_data:
+            if idx==number_of_lookup_data:
                 break
 
             result = myChord.exactMatch(row['AttainmentId'])

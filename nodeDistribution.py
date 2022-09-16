@@ -1,5 +1,4 @@
 from classes import Chord, Node, Utils
-from tqdm import tqdm
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -23,14 +22,14 @@ for i in range(number_of_nodes):
     myChord.nodeJoin(newNode)
 
 # Inserting data
-print('Inserting data ...')
 df = pd.read_csv('data/data.csv', low_memory=False)
-for index, row in tqdm(df.iterrows(), total=number_of_data):
+for idx, row in df.iterrows():
     # startingNode = random.randint(0,number_of_nodes-1)
     starting_node = 0
     myChord.insertData(row, starting_node)
-    if index == number_of_data:
+    if idx == number_of_data:
         break
+    Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
 
 data_count = []
 

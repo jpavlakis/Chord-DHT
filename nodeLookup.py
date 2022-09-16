@@ -4,7 +4,6 @@ import random
 import datetime
 import matplotlib.pyplot as plt
 from classes import Chord,Node,Utils
-from tqdm import tqdm
 
 
 #General Configuration
@@ -32,7 +31,8 @@ for m in range(min_m, max_m):
     number_of_nodes = int(math.ceil(2**m/2))
 
     print('Creating and insering nodes to Chord ...')
-    for i in tqdm(range(number_of_nodes)):
+    for i in range(number_of_nodes):
+        Utils.print_progress_bar(iteration=i+1, total=number_of_nodes, prefix="Creating Chord: ", suffix="Complete", length=75, printEnd='\r')
         newNode = Node.Node(Utils.generateIp(nodes))
         nodes.append(newNode)
 

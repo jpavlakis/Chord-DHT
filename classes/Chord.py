@@ -1,6 +1,5 @@
 from classes import FingerTable
 from classes import Utils
-from tqdm import tqdm
 
 class Chord:
     def __init__(self, m, safety_parameter):
@@ -136,7 +135,8 @@ class Chord:
     # are inserted.
     def massiveNodesJoin(self, nodes):
 
-        for node in tqdm(nodes):  
+        for idx, node in enumerate(nodes):
+            Utils.print_progress_bar(iteration=idx+1, total=len(nodes), prefix="Massive node join: ", suffix="Complete", length=75, printEnd='\r')
             # Create node ID for the given Chord
             node.setId(self.m)
             
@@ -156,7 +156,8 @@ class Chord:
             node.setFingerTable(FingerTable.FingerTable(self, node))
 
         # Find nodes that need Finger Table update
-        for chordNode in tqdm(self.nodes):
+        for idx, chordNode in enumerate(self.nodes):
+            Utils.print_progress_bar(iteration=idx+1, total=len(self.nodes), prefix="Updating finger tables: ", suffix="Complete", length=75, printEnd='\r')
             chordNode.updatePredeccessorFingerTable(self)
 
     def nodeLeave(self, node_to_remove_ID): 

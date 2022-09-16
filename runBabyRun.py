@@ -1,5 +1,4 @@
 from classes import Chord, Node, Utils
-from tqdm import tqdm
 import pandas as pd
 
 
@@ -26,21 +25,22 @@ for node in myChord.nodes:
         print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()}")
 
 
-input("Press any key to continue for data insertion...")
+input("\n\nPress any key to continue for data insertion...")
 
 # === Inserting Data
 
 df = pd.read_csv('data/data.csv', low_memory=False)
-for index, row in tqdm(df.iterrows(), total=number_of_data):
+for idx, row in df.iterrows():
     starting_node = 0
     myChord.insertData(row, starting_node)
-    if index == number_of_data:
+    if idx == number_of_data:
         break
+    Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
 
 for node in myChord.nodes:
         print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
-input("Press any key to continue to the menu...")
+input("\n\nPress any key to continue to the menu...\n")
 
 # ================ MAIN ================
 
@@ -83,10 +83,10 @@ while choice!='x':
 
         print('Examples of existing keys:')
         df = pd.read_csv('data/data.csv', low_memory=False)
-        for index, row in df.iterrows():
+        for idx, row in df.iterrows():
             starting_node = 0
             print(row['AttainmentId'])
-            if index==2:
+            if idx==2:
                 break
         update_key = input("Give the key of the record you want to update: ")
         myChord.updateRecord(update_key)
@@ -96,10 +96,10 @@ while choice!='x':
 
         print('Examples of existing keys:')
         df = pd.read_csv('data/data.csv', low_memory=False)
-        for index, row in df.iterrows():
+        for idx, row in df.iterrows():
             starting_node = 0
             print(row['AttainmentId'])
-            if index==2:
+            if idx==2:
                 break
         search_key = input('Give the id of the entry you want to search: ')
         result = myChord.exactMatch(search_key)
@@ -140,8 +140,7 @@ while choice!='x':
         pass
 
 
-    input("Press any key to continue...")
-    print('\n\n')
+    input("Press any key to continue...\n\n")
     print("========== MENU ==========")
     print("1. Insert Node")
     print("2. Delete Node")
