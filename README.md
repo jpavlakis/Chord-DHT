@@ -1,6 +1,6 @@
-#Chord-DHT
+# Chord-DHT
 
-Custom implementation of Chord in the scope of Multidimensional Data Structures course in CEID, University of Patras.
+Custom implementation of Chord in the scope of Multidimensional Data Structures course at CEID, University of Patras.
 
 ## How to use
 
@@ -11,7 +11,7 @@ To access the environment run:
 pipenv shell
 
 Once you are in the environment you are able to run every python file normally.
-e.g. python3 runBabyRun.py
+e.g. python3 <file>.py
 
 To exit the environment run:
 exit
