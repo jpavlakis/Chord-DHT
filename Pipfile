@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 pandas = "*"
 matplotlib = "*"
-tqdm = "*"
 pipfile = "*"
 pyqt5 = "*"
 
