@@ -1,2 +1,2 @@
 activate_pipenv_in_vscode
-*/__pycache__
+*/__pycache_/*
