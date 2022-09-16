@@ -53,6 +53,7 @@ print("5. Range Query")
 print("6. K-NN Query")
 print("7. Insert Key")
 print("8. Delete Key")
+print("9. Print current state of Chord")
 print("Press x to exit.")
 choice = input(">> ")
 
@@ -102,7 +103,7 @@ while choice!='x':
             if idx==2:
                 break
         search_key = input('Give the id of the entry you want to search: ')
-        result = myChord.exactMatch(search_key)
+        result, _ = myChord.exactMatch(search_key)
         if(result):
             print(result)
         else:
@@ -116,28 +117,38 @@ while choice!='x':
         returned_data = myChord.rangeQuery(myChord.nodes[0], int(starting_key), int(ending_key))
         print("Results:")
         for node in returned_data:
-            print(f"Data id after hashing: {node['hashKey']}  Original key before hashing: {node['AttainmentId']}")
+            print(f"Data id after hashing: {node['hash_key']}  Original key before hashing: {node['AttainmentId']}")
     
     if int(choice)==6:
 
         print('K-NN Query Started.')
         reference_key = input("Give reference key: ")
-        nearest_neighbors_num = input("Give neerest neighbors num: ")
+        nearest_neighbors_num = input("Give nearest neighbors num: ")
         nearest_neighbors = myChord.kNNQuery(myChord.nodes[0], int(reference_key), int(nearest_neighbors_num))
         print("Results: ")
         if nearest_neighbors:
             for node in nearest_neighbors:
-                print(f"Data id after hashing: {node['hashKey']}  Original key before hashing: {node['AttainmentId']}")
+                print(f"Data id after hashing: {node['hash_key']}  Original key before hashing: {node['AttainmentId']}")
         else:
             print("Please provide a smaller n for the K-NN query to work properly")
         
     if int(choice)==7:
         print("Inserting key ...")
-        pass
+        key_to_be_added = input("Give new key to add: ")
+        myChord.insertKey(key_to_be_added, 0)
+        result, nodeId = myChord.exactMatch(key_to_be_added)
+        print(f"Results:\nKey added to node {nodeId} with data:\n{result}")
 
+        
     if int(choice)==8:
         print("Deleting key ...")
-        pass
+        key_to_be_deleted = input("Give key to delete: ")
+        myChord.deleteKey(key_to_be_deleted)
+
+
+    if int(choice)==9:
+        for node in myChord.nodes:
+            print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
 
     input("Press any key to continue...\n\n")
@@ -148,6 +159,9 @@ while choice!='x':
     print("4. Exact Match")
     print("5. Range Query")
     print("6. K-NN Query")
+    print("7. Insert Key")
+    print("8. Delete Key")
+    print("9. Print current state of Chord")
     print("Press x to exit.")
     choice = input(">> ")
 

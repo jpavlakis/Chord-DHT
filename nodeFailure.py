@@ -58,7 +58,7 @@ for safety_parameter in range(safety_parameter_max):
             if idx==number_of_lookup_data:
                 break
 
-            result = myChord.exactMatch(row['AttainmentId'])
+            result, _ = myChord.exactMatch(row['AttainmentId'])
 
             if(result):
                 successfull_lookups+=1

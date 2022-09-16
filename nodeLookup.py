@@ -28,7 +28,7 @@ for m in range(min_m, max_m):
     myChord = Chord.Chord(m, safety_parameter)
 
     # The number of nodes fill 50% of the overall capacity
-    number_of_nodes = int(math.ceil(2**m/2))
+    number_of_nodes = int(math.ceil(2**(m-1)))
 
     print('Creating and insering nodes to Chord ...')
     for i in range(number_of_nodes):
@@ -49,7 +49,7 @@ for m in range(min_m, max_m):
 
         starting_node = random.randint(0,number_of_nodes-1)
         start = datetime.datetime.now()
-        result = myChord.exactMatch(row['AttainmentId'], starting_node, True)
+        result, _ = myChord.exactMatch(row['AttainmentId'], starting_node, True)
         end = datetime.datetime.now()
         total_time = total_time +  end - start
         #print(end - start)

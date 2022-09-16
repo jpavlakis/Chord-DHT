@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 number_of_nodes = 64
-number_of_data = 20000
+number_of_data = 20_000
 safety_parameter = 0
 m = 6
 
@@ -30,6 +30,12 @@ for idx, row in df.iterrows():
     if idx == number_of_data:
         break
     Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
+
+for node in myChord.nodes:
+    print(f'\n\n\n\nNode ID: {node.id}')
+    for entry in node.data:
+        print(entry['hash_key'])
+
 
 data_count = []
 

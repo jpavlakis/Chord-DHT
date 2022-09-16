@@ -7,8 +7,7 @@ class FingerTable:
         self.chordSize = chord.chordSize
         
     def updateFingerTable(self):
-
-        # γινεται χρηση του ID γιατι αν χρησιμοποιηθει direct διευθυνσιοδοτηση και αλλάξουν σειρα τα chord nodes, δειχνει σε αλλον node
+        
         self.successors = []
         chordNodesID = self.chord.getIdList()
         newNodeId = self.node.getId()

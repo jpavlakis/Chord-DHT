@@ -14,11 +14,12 @@ class Chord:
         key = Utils.hashing(row['AttainmentId'], self.m)
         # Building our data structur
         data = row.to_dict()
-        data['hashKey'] = key 
+        data['hash_key'] = key
         targetNode = self.nodes[index].findSuccesor(key)
         targetNode.data.append(data)
 
         # Failure prevention mechanism
+        # Adding redundancy of keys to the successor of the node
         current_node = targetNode
         for i in range(self.safety_parameter):
             nextNode = current_node.fingerTable.successors[0]
@@ -30,13 +31,42 @@ class Chord:
                 nextNode.backupData[i] = targetNode.data.copy()
             current_node = nextNode
 
-    # TODO
-    def insertKey(key):
-        pass
+    def insertKey(self, data_key, index):
 
-    # TODO
-    def deleteKey(key):
-        pass
+        # Create empty dict with the same structure as the rest of the data
+        data = dict((key, None) for key, value in self.nodes[0].data[-1].items())
+
+        data['AttainmentId'] = data_key
+        data['hash_key'] = Utils.hashing(data_key, self.m)
+        
+        targetNode = self.nodes[index].findSuccesor(data['hash_key'])
+        targetNode.data.append(data)
+        
+        # Failure prevention mechanism
+        # Adding redundancy of keys to the successor of the node
+        currentNode = targetNode
+        for i in range(self.safety_parameter):
+            nextNode = currentNode.fingerTable.successors[0]
+
+            #if its the first time create it with append else override
+            if len(nextNode.backupData) < self.safety_parameter:
+                nextNode.backupData.append(targetNode.data.copy())
+            else:
+                nextNode.backupData[i] = targetNode.data.copy()
+            currentNode = nextNode
+
+    def deleteKey(self, data_key):
+        
+        result, nodeId = self.exactMatch(data_key)
+        targetNode = self.nodes[self.getIndexFromId(nodeId)]
+        for entry in targetNode.data:
+            if result['hash_key'] == Utils.hashing(data_key, self.m) and result['AttainmentId'] == data_key:
+                previous_data_len = len(targetNode.data)
+                targetNode.data.remove(entry)
+                new_data_len = len(targetNode.data)
+                print(f'Key {data_key} has been deleted from node {targetNode.id}.')
+                print(f'Previous Data count: {previous_data_len} \t New Data count: {new_data_len}')
+
     
     def updateRecord(self, key):
        
@@ -48,7 +78,7 @@ class Chord:
         targetNode = self.nodes[0].findSuccesor(hashed_key)
 
         for dataEntry in targetNode.data:
-            if(dataEntry['hashKey']==hashed_key):
+            if(dataEntry['hash_key']==hashed_key):
                 print('Data entry found.')
                 valid_input = False
                 while(not valid_input):
@@ -68,7 +98,7 @@ class Chord:
                 targetNode = targetNode.fingeTable.successors[0]
             else:
                 for dataEntry in targetNode.data:
-                    if(dataEntry['hashKey']==hashed_key):
+                    if(dataEntry['hash_key']==hashed_key):
                         print('I fount it! ')
                         valid_input = False
                         while(not valid_input):
@@ -104,7 +134,7 @@ class Chord:
         nodesToUpdate = []
         for chordNode in self.nodes:
             for pow in range(self.m):
-                estimSuccID = chordNode.id + (1<<pow)
+                estimSuccID = chordNode.id + (2**pow)
                 estimSuccID = estimSuccID % self.chordSize
                 if estimSuccID <= node.id + self.chordSize and estimSuccID + self.chordSize > node.predecessor.id:
                     nodesToUpdate.append(self.nodes.index(chordNode))
@@ -122,7 +152,7 @@ class Chord:
         firstSuccessor = node.fingerTable.successors[0]
         data_to_be_removed = []
         for current_data in firstSuccessor.data:
-            if node.id >= current_data['hashKey'] :
+            if node.id >= current_data['hash_key'] :
                 node.data.append(current_data)
                 data_to_be_removed.append(current_data)
 
@@ -180,15 +210,15 @@ class Chord:
         for index in nodesToUpdate:
             self.nodes[index].updatePredeccessorFingerTable(self)
         
-    def exactMatch(self, dataKey, startingNode=0, addSleep=False):
+    def exactMatch(self, data_key, startingNode=0, add_sleep=False):
         
         # Hash the data key
-        hashedKey = Utils.hashing(dataKey, self.m)
+        hashed_key = Utils.hashing(data_key, self.m)
         #print('The hash of the given key is: ',hashedKey)
 
         # Select a random node to start search
         # Currently we use the first one
-        targetNode = self.nodes[startingNode].findSuccesor(hashedKey,addSleep)
+        targetNode = self.nodes[startingNode].findSuccesor(hashed_key, add_sleep)
 
         # Integrating the failure te
         node_hasFailed = False
@@ -199,10 +229,10 @@ class Chord:
             targetNode = targetNode.fingerTable.successors[0]
         else:
             # Searching the basic storage
-            for dataEntry in targetNode.data:
-                if(dataEntry['hashKey']==hashedKey):
+            for data_entry in targetNode.data:
+                if(data_entry['hash_key']==hashed_key):
                     #print('Found in basic storage')
-                    return dataEntry
+                    return data_entry, targetNode.id
 
     
         # Node failure handling mechanism
@@ -213,11 +243,11 @@ class Chord:
                     #print('Node has failed I move to the next one')
                     targetNode = targetNode.fingerTable.successors[0]
                 else:
-                    for dataEntry in targetNode.backupData[i]:
-                        if(dataEntry['hashKey']==hashedKey):
+                    for data_entry in targetNode.backupData[i]:
+                        if(data_entry['hash_key']==hashed_key):
                             #print('Found in backup storage')
                             #print('The id of the good node: ',targetNode.id)
-                            return dataEntry
+                            return data_entry
 
 
     def rangeQuery(self, startSearchNode, start, stop):
@@ -228,31 +258,29 @@ class Chord:
         if start > stop:           # Set the rest of nodes if query surpasses max cord size
             while(nodesOfInterest[-1].id <= self.chordSize):
                 nodesOfInterest.append(nodesOfInterest[-1].finger(0))
-            index=0
             while(nodesOfInterest[-1].id <= stop):
                 nodesOfInterest.append(nodesOfInterest[-1].finger(0))
-                index+=1
         else:                    # Set the rest of nodes for normal query
             while(nodesOfInterest[-1].id < stop):
                 nodesOfInterest.append(nodesOfInterest[-1].finger(0))
 
         # Initialize list with data to return
-        dataOfInterest = []
+        data_of_interest = []
 
         # First node
         for record in nodesOfInterest[0].data:
-            if record['hashKey'] >= start and record['hashKey']<=stop:
-                dataOfInterest.append(record)
+            if record['hash_key'] >= start and record['hash_key']<=stop:
+                data_of_interest.append(record)
         # Middle nodes  
         for node in nodesOfInterest[1:-2]:
-                dataOfInterest.append(node.data)
+                data_of_interest.append(node.data)
         
         # Last node
         for record in nodesOfInterest[-1].data:
-            if record['hashKey'] >= start and record['hashKey']<=stop:
-                dataOfInterest.append(record)
+            if record['hash_key'] >= start and record['hash_key']<=stop:
+                data_of_interest.append(record)
         
-        return dataOfInterest
+        return data_of_interest
 
     # TODO: Can be improved. Find the nearest neighbors of value from all nodes (?)
     # Add all the closest values from the baseNode, its successors and going forward
@@ -263,7 +291,7 @@ class Chord:
         allNeighbors = []
         nearestNeighbors = []
 
-        # First fetching the nodes of the hashKey successor
+        # First fetching the nodes of the hash_key successor
         # and its predecessor
         baseNode = startSearchNode.findSuccesor(hash_key)
         allNeighbors.extend(baseNode.data)
@@ -274,7 +302,7 @@ class Chord:
 
         # Then we extract the nearest neighbors
         for _ in range(n):
-            nearestNode = min(allNeighbors, key=lambda x: abs(x['hashKey'] - hash_key))
+            nearestNode = min(allNeighbors, key=lambda x: abs(x['hash_key'] - hash_key))
             allNeighbors.remove(nearestNode)
             nearestNeighbors.append(nearestNode)
 
@@ -282,10 +310,7 @@ class Chord:
         
     # Getters
     def getIdList(self):
-        id_list = []
-        for node in self.nodes:
-            id_list.append(node.getId())
-        return id_list
+        return [node.getId() for node in self.nodes]
 
     def getNodes(self):
         return self.nodes
@@ -294,7 +319,7 @@ class Chord:
         try:
             res = self.getIdList().index(int(nodeId))
         except ValueError:
-            print("   =>ERROR: Note with such ID does not exist!\n")
+            print("   =>ERROR: Node with such ID does not exist!\n")
             res = -1
         return res
 

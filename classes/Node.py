@@ -68,15 +68,12 @@ class Node:
 
 
     def getSuccessorsId(self):
-        successorsId = []
-        for node in self.fingerTable.successors:
-            successorsId.append(node.id)
-        return successorsId
+        return [node.id for node in self.fingerTable.successors]
 
     def updatePredeccessorFingerTable(self, chord):
         # Update Predecessor
-        selfIndex = chord.nodes.index(self) 
-        self.predecessor = chord.nodes[ (len(chord.nodes) + selfIndex-1 ) % len(chord.nodes)]
+        self_idx = chord.nodes.index(self) 
+        self.predecessor = chord.nodes[(len(chord.nodes) + self_idx-1 ) % len(chord.nodes)]
         
         # Update Successors
         self.fingerTable.updateFingerTable()
@@ -88,7 +85,5 @@ class Node:
     # key from all the data stored in that node
     # Usefull for debugging and demo purposes
     def getDataAttributeString(self, key):
-        dataValues = []
-        for dataEntry in self.data:
-            dataValues.append(str(dataEntry[key]))
-        return ', '.join(dataValues)
+        data_values = [str(data_entry[key] for data_entry in self.data)]
+        return ', '.join(data_values)
