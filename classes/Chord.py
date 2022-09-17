@@ -206,7 +206,6 @@ class Chord:
             if node_to_remove_ID in (node.id for node in chordNode.fingerTable.successors) or chordNode.predecessor.id == node_to_remove_ID :
                 nodesToUpdate.append(self.nodes.index(chordNode))
         
-        print(nodesToUpdate)
         for index in nodesToUpdate:
             self.nodes[index].updatePredeccessorFingerTable(self)
         
