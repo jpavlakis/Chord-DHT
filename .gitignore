@@ -1,2 +1,5 @@
 activate_pipenv_in_vscode
 */__pycache_/*
+
+Pipfile
+Pipfile.lock

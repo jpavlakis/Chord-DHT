@@ -192,7 +192,7 @@ class Chord:
 
     def nodeLeave(self, node_to_remove_ID): 
         node_index = self.getIndexFromId(node_to_remove_ID)
-
+        node_to_remove_ID = int(node_to_remove_ID)
         # Move its data to the next node
         firstSuccessor = self.nodes[node_index].fingerTable.successors[0]
         firstSuccessor.data.extend(self.nodes[node_index].data)
@@ -203,10 +203,10 @@ class Chord:
         # Find nodes that need Finger Table update
         nodesToUpdate = []
         for chordNode in self.nodes:
-            if node_to_remove_ID in (node.id for node in chordNode.fingerTable.successors) or chordNode.predecessor.id == node_to_remove_ID:
+            if node_to_remove_ID in (node.id for node in chordNode.fingerTable.successors) or chordNode.predecessor.id == node_to_remove_ID :
                 nodesToUpdate.append(self.nodes.index(chordNode))
         
-
+        print(nodesToUpdate)
         for index in nodesToUpdate:
             self.nodes[index].updatePredeccessorFingerTable(self)
         
