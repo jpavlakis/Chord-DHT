@@ -2,6 +2,20 @@ from classes import Chord, Node, Utils
 import pandas as pd
 
 
+def print_menu():
+
+    print("========== MENU ==========")
+    print("1. Insert Node")
+    print("2. Delete Node")
+    print("3. Update Node")
+    print("4. Exact Match")
+    print("5. Range Query")
+    print("6. K-NN Query")
+    print("7. Insert Key")
+    print("8. Delete Key")
+    print("9. Print current state of Chord")
+    print("Press x to exit.")
+
 # === Generating Chord
 
 # General Configuration
@@ -44,17 +58,7 @@ input("\n\nPress any key to continue to the menu...\n")
 
 # ================ MAIN ================
 
-print("========== MENU ==========")
-print("1. Insert Node")
-print("2. Delete Node")
-print("3. Update Node")
-print("4. Exact Match")
-print("5. Range Query")
-print("6. K-NN Query")
-print("7. Insert Key")
-print("8. Delete Key")
-print("9. Print current state of Chord")
-print("Press x to exit.")
+print_menu()
 choice = input(">> ")
 
 while choice!='x':
@@ -152,16 +156,7 @@ while choice!='x':
 
 
     input("Press any key to continue...\n\n")
-    print("========== MENU ==========")
-    print("1. Insert Node")
-    print("2. Delete Node")
-    print("3. Update Node")
-    print("4. Exact Match")
-    print("5. Range Query")
-    print("6. K-NN Query")
-    print("7. Insert Key")
-    print("8. Delete Key")
-    print("9. Print current state of Chord")
-    print("Press x to exit.")
+    
+    print_menu()
     choice = input(">> ")
 

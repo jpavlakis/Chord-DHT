@@ -25,8 +25,7 @@ class Node:
         self.fingerTable = fingerTable
 
     def finger(self, i):
-        allSucc = self.fingerTable.getSuccessors()
-        return allSucc[i]
+        return self.fingerTable.getSuccessors()[i]
 
     def findSuccesor(self, looking_id, add_sleep=False):
 
@@ -36,31 +35,31 @@ class Node:
             return self
 
         # The looking ID is after the chord zero needs an offset.
-        lookingIdOffseted = looking_id
+        looking_id_offseted = looking_id
         if looking_id < self.id:
             #print('Offset to looking ID added: ',lookingId,' -> ',lookingId+offset)
-            lookingIdOffseted+=offset
+            looking_id_offseted+=offset
 
         # If current Finger Table Node is after the chord zero, offset is needed.
-        current_finger_table_node_id = self.fingerTable.successors[0].id 
-        if current_finger_table_node_id < self.id:
-            current_finger_table_node_id+=offset
+        current_fingerTable_nodeId = self.fingerTable.successors[0].id 
+        if current_fingerTable_nodeId < self.id:
+            current_fingerTable_nodeId+=offset
 
-        if current_finger_table_node_id >= lookingIdOffseted:
+        if current_fingerTable_nodeId >= looking_id_offseted:
             #print('First Element Bigger, goes to the next node.')
             #print(self.fingerTable.successors[0].id)
             return self.fingerTable.successors[0]
 
-        for index,finger_table_node in enumerate(self.fingerTable.successors):    
-            current_finger_table_node_id = finger_table_node.id
+        for index, fingerTable_node in enumerate(self.fingerTable.successors):    
+            current_fingerTable_nodeId = fingerTable_node.id
             if(add_sleep):
                 sleep(0.001)
             # If current Finger Table Node is after the chord zero, offset is needed.
-            if(finger_table_node.id<self.id):
+            if(fingerTable_node.id < self.id):
                 #print('Offset to the finger table node id, added: ',current_finger_table_node_id,' -> ',current_finger_table_node_id+offset)
-                current_finger_table_node_id+=offset
+                current_fingerTable_nodeId+=offset
 
-            if lookingIdOffseted <= current_finger_table_node_id:
+            if looking_id_offseted <= current_fingerTable_nodeId:
                 return self.fingerTable.successors[index-1].findSuccesor(looking_id)
                 # break
         else:
@@ -83,7 +82,7 @@ class Node:
 
     # Returns a string with all the values of a specific 
     # key from all the data stored in that node
-    # Usefull for debugging and demo purposes
+    # Useful for debugging and demo purposes
     def getDataAttributeString(self, key):
         data_values = [str(data_entry[key] for data_entry in self.data)]
         return ', '.join(data_values)

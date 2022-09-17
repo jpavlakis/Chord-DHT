@@ -31,12 +31,7 @@ for idx, row in df.iterrows():
         break
     Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
 
-for node in myChord.nodes:
-    print(f'\n\n\n\nNode ID: {node.id}')
-    for entry in node.data:
-        print(entry['hash_key'])
-
-
+# Creating Plot
 data_count = []
 
 for node in myChord.nodes:

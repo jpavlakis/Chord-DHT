@@ -7,8 +7,8 @@ from classes import Chord, Node, Utils
 number_of_nodes = 50
 number_of_fails = 45
 
-number_of_data = 30000
-number_of_lookup_data = 1000
+number_of_data = 30_000
+number_of_lookup_data = 1_000
 
 safety_parameter_max = 5
 m = 10
