@@ -281,10 +281,6 @@ class Chord:
         
         return data_of_interest
 
-    # TODO: Can be improved. Find the nearest neighbors of value from all nodes (?)
-    # Add all the closest values from the baseNode, its successors and going forward
-    # Add all the closest values from the baseNode's predecessor and backwords
-    # Until we find the K nearest neighbors of the value
     def kNNQuery(self, startSearchNode, hash_key, n):    
         
         allNeighbors = []

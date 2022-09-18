@@ -2,6 +2,7 @@ import random
 import socket
 import struct
 import hashlib
+import math
 
 def generateIp(nodes):
     """
@@ -52,3 +53,10 @@ def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1
     print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
     if iteration == total:
         print()
+
+def closest_power2_exponent(x):
+    """
+    Returns the exponent of the closest power of 2 to the input x
+    """
+    return math.ceil(math.log(x,2))
+

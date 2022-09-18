@@ -19,20 +19,16 @@ def print_menu():
 # === Generating Chord
 
 # General Configuration
-number_of_nodes = 20
+number_of_nodes = 32
 number_of_data = 100
-m = 6
+m = Utils.closest_power2_exponent(number_of_nodes)
 safety_parameter = 0
 
 myChord = Chord.Chord(m, safety_parameter)
 
-# All the nodes that have been created
-nodes = []
-
 # Create nodes
 for i in range(number_of_nodes):
-    newNode = Node.Node(Utils.generateIp(nodes))
-    nodes.append(newNode)
+    newNode = Node.Node(Utils.generateIp(myChord.nodes))
     myChord.nodeJoin(newNode)
 
 for node in myChord.nodes:
@@ -64,15 +60,18 @@ choice = input(">> ")
 while choice!='x':
     if int(choice)==1:
 
-        newNode = Node.Node(Utils.generateIp(nodes))
-        print(f"A new node has been generated with ip: {newNode.ipAddress}")
-        print("Inserting Node...")
-        print("Updating finger tables...")
-        myChord.nodeJoin(newNode)
-        print(f"New node id: {newNode.id}")
-        print("New chord structure:")
-        for node in myChord.nodes:
-            print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
+        if len(myChord.nodes) >= 2**m:
+            print("Maximum number of nodes for given m is reached. No more nodes can be added to the Chord.")
+        else:
+            newNode = Node.Node(Utils.generateIp(myChord.nodes))
+            print(f"A new node has been generated with ip: {newNode.ipAddress}")
+            print("Inserting Node...")
+            print("Updating finger tables...")
+            myChord.nodeJoin(newNode)
+            print(f"New node id: {newNode.id}")
+            print("New chord structure:")
+            for node in myChord.nodes:
+                print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
 
     if int(choice)==2:

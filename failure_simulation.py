@@ -11,7 +11,7 @@ number_of_data = 30_000
 number_of_lookup_data = 1_000
 
 safety_parameter_max = 5
-m = 10
+m = Utils.closest_power2_exponent(number_of_nodes)
 
 fail_rate = [] # used for plotting
 
