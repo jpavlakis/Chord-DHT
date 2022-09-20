@@ -55,10 +55,10 @@ for safety_parameter in range(safety_parameter_max):
         successfull_lookups = 0
         for idx, row in df.iterrows():
 
-            if idx==number_of_lookup_data:
+            if idx == number_of_lookup_data:
                 break
 
-            result, _ = myChord.exactMatch(row['AttainmentId'])
+            result, nodeId = myChord.exactMatch(row['AttainmentId'])
 
             if(result):
                 successfull_lookups+=1

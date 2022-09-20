@@ -40,10 +40,16 @@ class Chord:
         data['hash_key'] = Utils.hashing(data_key, self.m)
         
         targetNode = self.nodes[index].findSuccesor(data['hash_key'])
+
+        for entry in targetNode.data:
+            if entry['AttainmentId'] == data_key:
+                print(f'\nKey {data_key} has already been inserted in node {targetNode.id}.')
+                return
+
         targetNode.data.append(data)
         
         # Failure prevention mechanism
-        # Adding redundancy of keys to the successor of the node
+        # Adding redundancy of keys to the first successor of the node
         currentNode = targetNode
         for i in range(self.safety_parameter):
             nextNode = currentNode.fingerTable.successors[0]
@@ -54,18 +60,29 @@ class Chord:
             else:
                 nextNode.backupData[i] = targetNode.data.copy()
             currentNode = nextNode
+        
+        print(f"\nKey {data_key} added to node {targetNode.id} with data:\n\n{data}")
 
     def deleteKey(self, data_key):
         
         result, nodeId = self.exactMatch(data_key)
+        if nodeId == -1:
+            print(f'\nKey {data_key} does not exist.')
+            return
+        
         targetNode = self.nodes[self.getIndexFromId(nodeId)]
-        for entry in targetNode.data:
-            if result['hash_key'] == Utils.hashing(data_key, self.m) and result['AttainmentId'] == data_key:
-                previous_data_len = len(targetNode.data)
-                targetNode.data.remove(entry)
-                new_data_len = len(targetNode.data)
-                print(f'Key {data_key} has been deleted from node {targetNode.id}.')
-                print(f'Previous Data count: {previous_data_len} \t New Data count: {new_data_len}')
+        
+        # Delete from target node
+        previous_data_len = len(targetNode.data)
+        targetNode.data.remove(result)
+        new_data_len = len(targetNode.data)
+
+        # If data stored as backup, delete it
+        if result in targetNode.fingerTable.successors[0].backupData:
+            targetNode.fingerTable.successors[0].backupData.remove(result)
+        
+        print(f'\nKey {data_key} has been deleted from node {targetNode.id}.')
+        print(f'Previous Data count: {previous_data_len} \t New Data count: {new_data_len}')
 
     
     def updateRecord(self, key):
@@ -116,15 +133,11 @@ class Chord:
         
         # Making sure that we don't have double ids
         while node.id in (chord_node.id for chord_node in self.nodes):
-            node.id = (node.id + 1)%2 **self.m
+            node.id = (node.id + 1) % 2**self.m
 
         # Insert ordered in Node's list 
         self.nodes.append(node)
-        i = len(self.nodes) - 1
-        if i > 0:
-            while self.nodes[i-1].getId() > self.nodes[i].getId() and i > 0:
-                self.nodes[i-1], self.nodes[i]=self.nodes[i], self.nodes[i-1]
-                i-=1    
+        self.nodes.sort(key=lambda x: x.getId())
 
         # Create Finger Table 
         node.setFingerTable(FingerTable.FingerTable(self, node))
@@ -176,11 +189,7 @@ class Chord:
 
             # Insert ordered in Node's list 
             self.nodes.append(node)
-            i = len(self.nodes) - 1
-            if i > 0:
-                while self.nodes[i-1].getId() > self.nodes[i].getId() and i > 0:
-                    self.nodes[i-1], self.nodes[i]=self.nodes[i], self.nodes[i-1]
-                    i-=1    
+            self.nodes.sort(key=lambda x: x.getId())
 
             # Create Finger Table 
             node.setFingerTable(FingerTable.FingerTable(self, node))
@@ -210,7 +219,6 @@ class Chord:
             self.nodes[index].updatePredeccessorFingerTable(self)
         
     def exactMatch(self, data_key, startingNode=0, add_sleep=False):
-        
         # Hash the data key
         hashed_key = Utils.hashing(data_key, self.m)
         #print('The hash of the given key is: ',hashedKey)
@@ -229,7 +237,7 @@ class Chord:
         else:
             # Searching the basic storage
             for data_entry in targetNode.data:
-                if(data_entry['hash_key']==hashed_key):
+                if data_entry['hash_key'] == hashed_key and data_entry['AttainmentId'] == data_key:
                     #print('Found in basic storage')
                     return data_entry, targetNode.id
 
@@ -243,10 +251,12 @@ class Chord:
                     targetNode = targetNode.fingerTable.successors[0]
                 else:
                     for data_entry in targetNode.backupData[i]:
-                        if(data_entry['hash_key']==hashed_key):
+                        if data_entry['hash_key'] == hashed_key and data_entry['AttainmentId'] == data_key:
                             #print('Found in backup storage')
                             #print('The id of the good node: ',targetNode.id)
-                            return data_entry
+                            return data_entry, targetNode.id
+
+        return {}, -1
 
 
     def rangeQuery(self, startSearchNode, start, stop):

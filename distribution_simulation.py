@@ -2,7 +2,7 @@ from classes import Chord, Node, Utils
 import pandas as pd
 import matplotlib.pyplot as plt
 
-number_of_nodes = 4
+number_of_nodes = 64
 number_of_data = 20_000
 safety_parameter = 0
 m = Utils.closest_power2_exponent(number_of_nodes)

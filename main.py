@@ -4,7 +4,7 @@ import pandas as pd
 
 def print_menu():
 
-    print("========== MENU ==========")
+    print("========== Chord-DHT MENU ==========")
     print("1. Insert Node")
     print("2. Delete Node")
     print("3. Update Node")
@@ -19,7 +19,7 @@ def print_menu():
 # === Generating Chord
 
 # General Configuration
-number_of_nodes = 32
+number_of_nodes = 25
 number_of_data = 100
 m = Utils.closest_power2_exponent(number_of_nodes)
 safety_parameter = 0
@@ -64,7 +64,7 @@ while choice!='x':
             print("Maximum number of nodes for given m is reached. No more nodes can be added to the Chord.")
         else:
             newNode = Node.Node(Utils.generateIp(myChord.nodes))
-            print(f"A new node has been generated with ip: {newNode.ipAddress}")
+            print(f"A new node has been generated with IP: {newNode.ipAddress}")
             print("Inserting Node...")
             print("Updating finger tables...")
             myChord.nodeJoin(newNode)
@@ -74,7 +74,7 @@ while choice!='x':
                 print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
 
-    if int(choice)==2:
+    elif int(choice)==2:
 
         deleted_key = input('Give the id of the node you want to delete: ')
         myChord.nodeLeave(deleted_key)
@@ -83,7 +83,7 @@ while choice!='x':
             print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
 
-    if int(choice)==3:
+    elif int(choice)==3:
 
         print('Examples of existing keys:')
         df = pd.read_csv('data/data.csv', low_memory=False)
@@ -96,7 +96,7 @@ while choice!='x':
         myChord.updateRecord(update_key)
 
 
-    if int(choice)==4:
+    elif int(choice)==4:
 
         print('Examples of existing keys:')
         df = pd.read_csv('data/data.csv', low_memory=False)
@@ -106,13 +106,13 @@ while choice!='x':
             if idx==2:
                 break
         search_key = input('Give the id of the entry you want to search: ')
-        result, _ = myChord.exactMatch(search_key)
-        if(result):
-            print(result)
+        result, nodeId = myChord.exactMatch(search_key)
+        if nodeId != -1:
+            print(f"\nKey {search_key} found in node {nodeId} with data:\n\n{result}")
         else:
-            print('Given id not found.')
+            print(f'\nThere are no entries with id {search_key} found.')
 
-    if int(choice)==5:
+    elif int(choice)==5:
 
         print('Range Query Started.')
         starting_key = input("Give starting key: ")
@@ -122,7 +122,7 @@ while choice!='x':
         for node in returned_data:
             print(f"Data id after hashing: {node['hash_key']}  Original key before hashing: {node['AttainmentId']}")
     
-    if int(choice)==6:
+    elif int(choice)==6:
 
         print('K-NN Query Started.')
         reference_key = input("Give reference key: ")
@@ -133,28 +133,28 @@ while choice!='x':
             for node in nearest_neighbors:
                 print(f"Data id after hashing: {node['hash_key']}  Original key before hashing: {node['AttainmentId']}")
         else:
-            print("Please provide a smaller n for the K-NN query to work properly")
+            print("Please provide a smaller amount of NNs for the K-NN query to work properly")
         
-    if int(choice)==7:
+    elif int(choice)==7:
         print("Inserting key ...")
         key_to_be_added = input("Give new key to add: ")
         myChord.insertKey(key_to_be_added, 0)
-        result, nodeId = myChord.exactMatch(key_to_be_added)
-        print(f"Results:\nKey added to node {nodeId} with data:\n{result}")
 
         
-    if int(choice)==8:
+    elif int(choice)==8:
         print("Deleting key ...")
         key_to_be_deleted = input("Give key to delete: ")
         myChord.deleteKey(key_to_be_deleted)
 
 
-    if int(choice)==9:
+    elif int(choice)==9:
         for node in myChord.nodes:
             print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
+    else:
+        pass
 
-    input("Press any key to continue...\n\n")
+    input("\n\nPress any key to continue...\n\n")
     
     print_menu()
     choice = input(">> ")
