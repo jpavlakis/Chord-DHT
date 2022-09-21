@@ -29,7 +29,7 @@ for idx, row in df.iterrows():
     myChord.insertData(row, starting_node)
     if idx == number_of_data:
         break
-    Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
+    Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75)
 
 # Creating Plot
 data_count = []

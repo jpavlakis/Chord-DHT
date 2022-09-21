@@ -182,7 +182,7 @@ class Chord:
     def massiveNodesJoin(self, nodes):
 
         for idx, node in enumerate(nodes):
-            Utils.print_progress_bar(iteration=idx+1, total=len(nodes), prefix="Massive node join: ", suffix="Complete", length=75, printEnd='\r')
+            Utils.print_progress_bar(iteration=idx+1, total=len(nodes), prefix="Massive node join: ", suffix="Complete", length=75)
             # Create node ID for the given Chord
             node.setId(self.m)
             
@@ -199,7 +199,7 @@ class Chord:
 
         # Find nodes that need Finger Table update
         for idx, chordNode in enumerate(self.nodes):
-            Utils.print_progress_bar(iteration=idx+1, total=len(self.nodes), prefix="Updating finger tables: ", suffix="Complete", length=75, printEnd='\r')
+            Utils.print_progress_bar(iteration=idx+1, total=len(self.nodes), prefix="Updating finger tables: ", suffix="Complete", length=75)
             chordNode.updatePredeccessorFingerTable(self)
 
     def nodeLeave(self, node_to_remove_ID): 

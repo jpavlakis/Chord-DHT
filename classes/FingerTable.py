@@ -1,4 +1,3 @@
-# Class for saving IDs for predecessors/successors
 class FingerTable:
     def __init__(self, chord, node):
         self.successors = []

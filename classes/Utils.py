@@ -11,13 +11,13 @@ def generateIp(nodes):
     ip_exists = False
     ipAddress = socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)))
     for node in nodes:
-        if(node.ipAddress==ipAddress):
+        if(node.ipAddress == ipAddress):
             ip_exists = True
             break
     while(ip_exists):
         ipAddress = socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)))
         for node in nodes:
-            if(node.ipAddress==ipAddress):
+            if(node.ipAddress == ipAddress):
                 ip_exists = True
                 break
         else:
@@ -34,7 +34,7 @@ def generateHash(value, m):
     hashed_ip_bin = bin(int(hashed_ip_hex, 16))
     return int(hashed_ip_bin[-m:], 2)
 
-def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = '\r'):
     """
     Call in a loop to create terminal progress bar
     @params:

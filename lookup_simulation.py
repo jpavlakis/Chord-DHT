@@ -32,7 +32,7 @@ for m in range(min_m, max_m):
 
     print('Creating and inserting nodes to Chord ...')
     for i in range(number_of_nodes):
-        Utils.print_progress_bar(iteration=i+1, total=number_of_nodes, prefix="Creating Chord: ", suffix="Complete", length=75, printEnd='\r')
+        Utils.print_progress_bar(iteration=i+1, total=number_of_nodes, prefix="Creating Chord: ", suffix="Complete", length=75)
         newNode = Node.Node(Utils.generateIp(myChord.nodes))
         nodes.append(newNode)
 

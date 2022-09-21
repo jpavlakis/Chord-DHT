@@ -45,7 +45,7 @@ for redundancy_param in range(redundancy_param_max):
         myChord.insertData(row, starting_node)
         if idx == number_of_data:
             break
-        Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
+        Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75)
 
 
     for fail_number in range(number_of_fails):
@@ -77,9 +77,8 @@ for redundancy_param in range(redundancy_param_max):
 # Creating Plots
 plt.style.use('seaborn')
 fig, ax = plt.subplots()
-# fig.set_size_inches(8.5, 5)
 
-colors = ['tab:red', 'tab:blue', 'tab:green','tab:orange','tab:cyan','tab:gray', 'tab:purple']
+colors = ['tab:red', 'tab:blue', 'tab:green', 'tab:orange', 'tab:cyan', 'tab:gray', 'tab:purple']
 
 for redundancy_param in range(redundancy_param_max):
     ax.plot(range(1, number_of_fails+1), fail_rate[redundancy_param], color=colors[redundancy_param], label=f'Redundancy Parameter: {redundancy_param}')

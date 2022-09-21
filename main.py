@@ -45,7 +45,7 @@ for idx, row in df.iterrows():
     myChord.insertData(row, starting_node)
     if idx == number_of_data:
         break
-    Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
+    Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75)
 
 for node in myChord.nodes:
         print(f"NodeID: {node.getId()} \tPredecessor: {node.getPredecessor().getId()} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.getData())}")
