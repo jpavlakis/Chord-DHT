@@ -7,27 +7,27 @@ from classes import Chord, Node, Utils
 number_of_nodes = 50
 number_of_fails = 45
 
-number_of_data = 30_000
+number_of_data = 5_000
 number_of_lookup_data = 1_000
 
-safety_parameter_max = 5
+redundancy_param_max = 5
 m = Utils.closest_power2_exponent(number_of_nodes)
 
 fail_rate = [] # used for plotting
 
-for safety_parameter in range(safety_parameter_max):
+for redundancy_param in range(redundancy_param_max):
 
-    print(f'Proccess Started for safety parameter: {safety_parameter}')
+    print(f'Proccess Started for redundancy parameter: {redundancy_param}')
 
     # List of all nodes created
     nodes = []
 
     fail_rate.append(None)
-    fail_rate[safety_parameter] = []
+    fail_rate[redundancy_param] = []
 
     # Creating Chord
     print('Creating Chord ...')
-    myChord = Chord.Chord(m, safety_parameter)
+    myChord = Chord.Chord(m, redundancy_param)
 
 
     # Creating nodes
@@ -63,27 +63,32 @@ for safety_parameter in range(safety_parameter_max):
             if(result):
                 successfull_lookups+=1
 
-        current_fail_rate = round(((number_of_lookup_data-successfull_lookups)/number_of_lookup_data)*100,2)
-        fail_rate[safety_parameter].append(current_fail_rate)
-        print(f'Fail percentage of lookups: {current_fail_rate}%')
+        current_fail_rate = round(((number_of_lookup_data-successfull_lookups)/number_of_lookup_data)*100, 2)
+        failed_nodes_percentage = round((fail_number + 1) / number_of_nodes * 100, 2)
+        fail_rate[redundancy_param].append(current_fail_rate)
+        print(f'\rNumber of failed nodes: {fail_number+1} out of {number_of_nodes} ({failed_nodes_percentage})% \t Fail percentage of lookups: {current_fail_rate}%', end='\r')
+    else:
+        print()
     
     
-    print(f'Proccess finished for safety parameter: {safety_parameter}\n\n')
+    print(f'Proccess finished for redundancy parameter: {redundancy_param}\n\n')
 
 
 # Creating Plots
 plt.style.use('seaborn')
 fig, ax = plt.subplots()
-fig.set_size_inches(8.5, 5)
+# fig.set_size_inches(8.5, 5)
 
-colors = ['r', 'b', 'g','y','m','k','c']
+colors = ['tab:red', 'tab:blue', 'tab:green','tab:orange','tab:cyan','tab:gray', 'tab:purple']
 
-for safety_parameter in range(safety_parameter_max):
-    ax.plot(range(number_of_fails), fail_rate[safety_parameter], color=colors[safety_parameter], label=f'Safety Parameter: {safety_parameter}')
+for redundancy_param in range(redundancy_param_max):
+    ax.plot(range(1, number_of_fails+1), fail_rate[redundancy_param], color=colors[redundancy_param], label=f'Redundancy Parameter: {redundancy_param}')
 
 ax.set_xlabel('Num of Failed Nodes')
-ax.set_ylabel('Failure %')
-ax.set_title('Failure % per Failed Nodes')
+ax.set_ylabel('Lookup Failure %')
+ax.set_title('Lookup Failure % per Failed Nodes')
+plt.ylim(0, 100)
+plt.xlim(1, number_of_fails)
 plt.legend()
 plt.tight_layout()
 plt.show()

@@ -25,7 +25,7 @@ def generateIp(nodes):
     
     return ipAddress
 
-def hashing(value, m):
+def generateHash(value, m):
     """
     Hashing the value using sha1 algorithm and from the 160 bit
     output we only take the m last bits.

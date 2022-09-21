@@ -6,7 +6,7 @@ from classes import Chord, Node, Utils
 
 
 #General Configuration
-safety_parameter = 0
+redundancy_param = 0
 
 number_of_samples_per_nodes = 100
 
@@ -25,7 +25,7 @@ for m in range(min_m, max_m):
 
     # Creating Chord
     print('Creating Chord ...')
-    myChord = Chord.Chord(m, safety_parameter)
+    myChord = Chord.Chord(m, redundancy_param)
 
     # The number of nodes fill 50% of the overall capacity
     number_of_nodes = 2**(m-1)

@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 
 number_of_nodes = 64
 number_of_data = 20_000
-safety_parameter = 0
+redundancy_param = 0
 m = Utils.closest_power2_exponent(number_of_nodes)
 
 # Creating Chord
 print('Creating Chord ...')
-myChord = Chord.Chord(m, safety_parameter)
+myChord = Chord.Chord(m, redundancy_param)
 
 # List of all nodes created
 nodes = []
@@ -35,7 +35,7 @@ for idx, row in df.iterrows():
 data_count = []
 
 for node in myChord.nodes:
-    data_count.append(len(node.data))
+    data_count.append(len(node.getData()))
 print(data_count)
 
 fig, ax = plt.subplots()

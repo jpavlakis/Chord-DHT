@@ -22,9 +22,9 @@ def print_menu():
 number_of_nodes = 25
 number_of_data = 100
 m = Utils.closest_power2_exponent(number_of_nodes)
-safety_parameter = 0
+redundancy_param = 0
 
-myChord = Chord.Chord(m, safety_parameter)
+myChord = Chord.Chord(m, redundancy_param)
 
 # Create nodes
 for i in range(number_of_nodes):
@@ -32,7 +32,7 @@ for i in range(number_of_nodes):
     myChord.nodeJoin(newNode)
 
 for node in myChord.nodes:
-        print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()}")
+        print(f"NodeID: {node.getId()} \tPredecessor: {node.getPredecessor().getId()} \t Successors: {node.getSuccessorsId()}")
 
 
 input("\n\nPress any key to continue for data insertion...")
@@ -48,7 +48,7 @@ for idx, row in df.iterrows():
     Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75, printEnd='\r')
 
 for node in myChord.nodes:
-        print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
+        print(f"NodeID: {node.getId()} \tPredecessor: {node.getPredecessor().getId()} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.getData())}")
 
 input("\n\nPress any key to continue to the menu...\n")
 
@@ -59,7 +59,6 @@ choice = input(">> ")
 
 while choice!='x':
     if int(choice)==1:
-
         if len(myChord.nodes) >= 2**m:
             print("Maximum number of nodes for given m is reached. No more nodes can be added to the Chord.")
         else:
@@ -71,20 +70,20 @@ while choice!='x':
             print(f"New node id: {newNode.id}")
             print("New chord structure:")
             for node in myChord.nodes:
-                print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
+                print(f"NodeID: {node.getId()} \tPredecessor: {node.getPredecessor().getId()} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
 
     elif int(choice)==2:
-
-        deleted_key = input('Give the id of the node you want to delete: ')
+        deleted_key = input('\nGive the id of the node you want to delete: ')
+        print('Deleting Node ...')
         myChord.nodeLeave(deleted_key)
         print("New chord structure:")
         for node in myChord.nodes:
-            print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
+            print(f"NodeID: {node.getId()} \tPredecessor: {node.getPredecessor().getId()} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
 
     elif int(choice)==3:
-
+        print('\nUpdating node ...')
         print('Examples of existing keys:')
         df = pd.read_csv('data/data.csv', low_memory=False)
         for idx, row in df.iterrows():
@@ -92,12 +91,12 @@ while choice!='x':
             print(row['AttainmentId'])
             if idx==2:
                 break
-        update_key = input("Give the key of the record you want to update: ")
+        update_key = input("\n\nGive the key of the record you want to update: ")
         myChord.updateRecord(update_key)
 
 
     elif int(choice)==4:
-
+        print('\nExact match ...')
         print('Examples of existing keys:')
         df = pd.read_csv('data/data.csv', low_memory=False)
         for idx, row in df.iterrows():
@@ -105,7 +104,7 @@ while choice!='x':
             print(row['AttainmentId'])
             if idx==2:
                 break
-        search_key = input('Give the id of the entry you want to search: ')
+        search_key = input('\nGive the id of the entry you want to search: ')
         result, nodeId = myChord.exactMatch(search_key)
         if nodeId != -1:
             print(f"\nKey {search_key} found in node {nodeId} with data:\n\n{result}")
@@ -114,7 +113,7 @@ while choice!='x':
 
     elif int(choice)==5:
 
-        print('Range Query Started.')
+        print('Range Query ...')
         starting_key = input("Give starting key: ")
         ending_key = input("Give ending key: ")
         returned_data = myChord.rangeQuery(myChord.nodes[0], int(starting_key), int(ending_key))
@@ -124,11 +123,11 @@ while choice!='x':
     
     elif int(choice)==6:
 
-        print('K-NN Query Started.')
-        reference_key = input("Give reference key: ")
+        print('K-NN Query ...')
+        reference_key = input("\nGive reference key: ")
         nearest_neighbors_num = input("Give nearest neighbors num: ")
         nearest_neighbors = myChord.kNNQuery(myChord.nodes[0], int(reference_key), int(nearest_neighbors_num))
-        print("Results: ")
+        print("\n\nResults: ")
         if nearest_neighbors:
             for node in nearest_neighbors:
                 print(f"Data id after hashing: {node['hash_key']}  Original key before hashing: {node['AttainmentId']}")
@@ -136,20 +135,20 @@ while choice!='x':
             print("Please provide a smaller amount of NNs for the K-NN query to work properly")
         
     elif int(choice)==7:
-        print("Inserting key ...")
         key_to_be_added = input("Give new key to add: ")
+        print("Inserting key ...")
         myChord.insertKey(key_to_be_added, 0)
 
         
     elif int(choice)==8:
-        print("Deleting key ...")
         key_to_be_deleted = input("Give key to delete: ")
+        print("Deleting key ...")
         myChord.deleteKey(key_to_be_deleted)
 
 
     elif int(choice)==9:
         for node in myChord.nodes:
-            print(f"NodeID: {node.id} \tPredecessor: {node.predecessor.id} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
+            print(f"NodeID: {node.getId()} \tPredecessor: {node.getPredecessor().getId()} \t Successors: {node.getSuccessorsId()} \t Data count: {len(node.data)}")
 
     else:
         pass
