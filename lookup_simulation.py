@@ -8,10 +8,9 @@ from classes import Chord, Node, Utils
 #General Configuration
 redundancy_param = 0
 
-number_of_samples_per_nodes = 100
+total_lookups = 100
 
-min_m = 4
-max_m = 8
+min_m, max_m = 4, 8
 
 avg_times = []
 
@@ -41,10 +40,12 @@ for m in range(min_m, max_m):
 
     df = pd.read_csv('data/data.csv', low_memory=False)
     
+    # Create empty datetime object to store total time
+    # consumed in queries for the certain m iteration
     total_time = datetime.datetime.now() - datetime.datetime.now()
 
     for idx, row in df.iterrows():
-        if idx == number_of_samples_per_nodes:
+        if idx == total_lookups:
             break
 
         startingNode = random.randint(0, number_of_nodes-1)
@@ -53,18 +54,18 @@ for m in range(min_m, max_m):
         end = datetime.datetime.now()
         total_time = total_time +  end - start
     
-    avg_total_time = total_time / number_of_samples_per_nodes
+    avg_total_time = total_time / total_lookups
     avg_times.append(avg_total_time.microseconds)
     print(f'Avarage Time: {avg_total_time.microseconds}')
     print('\n\n')
 
 
 # Creating Plot
-plt.style.use('seaborn')
+plt.style.use('ggplot')
 fig, ax = plt.subplots()
 fig.set_size_inches(8.5, 5)
 
-ax.plot(range(min_m,max_m), avg_times, color='r', label='Avarage Lookup Time')
+ax.plot(range(min_m,max_m), avg_times, color='tab:cyan')
 
 ax.set_xlabel('m')
 ax.set_ylabel('Avarage lookup time (μs)')

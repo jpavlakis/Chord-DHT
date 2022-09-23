@@ -31,7 +31,7 @@ class Node:
 
         offset = 2**self.m
 
-        if looking_id==self.id:
+        if looking_id == self.id:
             return self
 
         # The looking ID is after the chord zero needs an offset.
@@ -72,6 +72,9 @@ class Node:
 
     def getSuccessorsId(self):
         return [node.id for node in self.fingerTable.successors]
+    
+    def getIpAddress(self):
+        return self.ipAddress
 
     def getId(self):
         return self.id

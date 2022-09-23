@@ -290,7 +290,7 @@ class Chord:
         
         return data_of_interest
 
-    def kNNQuery(self, startSearchNode, hash_key, n):    
+    def kNNQuery(self, startSearchNode, hash_key, k):    
         
         allNeighbors = []
         nearestNeighbors = []
@@ -301,11 +301,11 @@ class Chord:
         allNeighbors.extend(baseNode.getData())
         allNeighbors.extend(baseNode.predecessor.getData())
         
-        if(len(allNeighbors) < n):
+        if(len(allNeighbors) < k):
             return False
 
         # Then we extract the nearest neighbors
-        for _ in range(n):
+        for _ in range(k):
             nearestNode = min(allNeighbors, key=lambda x: abs(x['hash_key'] - hash_key))
             allNeighbors.remove(nearestNode)
             nearestNeighbors.append(nearestNode)

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import random
 from classes import Chord, Node, Utils
 
 
@@ -8,9 +9,9 @@ number_of_nodes = 50
 number_of_fails = 45
 
 number_of_data = 5_000
-number_of_lookup_data = 1_000
+total_lookups = 1_000
 
-redundancy_param_max = 5
+redundancy_param_max = 6
 m = Utils.closest_power2_exponent(number_of_nodes)
 
 fail_rate = [] # used for plotting
@@ -53,17 +54,18 @@ for redundancy_param in range(redundancy_param_max):
         # Node failure 
         nodes[fail_number].hasFailed = True
         successfull_lookups = 0
-        for idx, row in df.iterrows():
 
-            if idx == number_of_lookup_data:
-                break
+        for lookup_iterations in range(total_lookups):
 
-            result, nodeId = myChord.exactMatch(row['AttainmentId'])
+            idx = random.randint(0, number_of_data-1)
+
+            result, nodeId = myChord.exactMatch(df.iloc[idx]['AttainmentId'])
 
             if(result):
                 successfull_lookups+=1
+            
 
-        current_fail_rate = round(((number_of_lookup_data-successfull_lookups)/number_of_lookup_data)*100, 2)
+        current_fail_rate = round(((total_lookups - successfull_lookups) / total_lookups) * 100, 2)
         failed_nodes_percentage = round((fail_number + 1) / number_of_nodes * 100, 2)
         fail_rate[redundancy_param].append(current_fail_rate)
         print(f'\rNumber of failed nodes: {fail_number+1} out of {number_of_nodes} ({failed_nodes_percentage})% \t Fail percentage of lookups: {current_fail_rate}%', end='\r')
@@ -75,10 +77,10 @@ for redundancy_param in range(redundancy_param_max):
 
 
 # Creating Plots
-plt.style.use('seaborn')
+plt.style.use('ggplot')
 fig, ax = plt.subplots()
 
-colors = ['tab:red', 'tab:blue', 'tab:green', 'tab:orange', 'tab:cyan', 'tab:gray', 'tab:purple']
+colors = ['tab:red', 'tab:blue', 'tab:green', 'tab:orange', 'tab:cyan', 'tab:purple', 'tab:gray']
 
 for redundancy_param in range(redundancy_param_max):
     ax.plot(range(1, number_of_fails+1), fail_rate[redundancy_param], color=colors[redundancy_param], label=f'Redundancy Parameter: {redundancy_param}')
