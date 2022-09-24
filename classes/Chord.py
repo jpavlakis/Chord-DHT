@@ -107,6 +107,10 @@ class Chord:
                         elif(column in data_entry):
                             new_value = input('Give the new value: ')
                             data_entry[column] = new_value
+                            # Update backup data if it exists in backup storage
+                            for backup_data_entry in targetNode.fingerTable.successors[0].getBackupData():
+                                if(backup_data_entry['hash_key'] == hashed_key):
+                                    backup_data_entry[column] = new_value
                             return
                         else:
                             print(f'Column {column} doesn\'t exist.\n\n')
@@ -258,10 +262,10 @@ class Chord:
         return {}, -1
 
 
-    def rangeQuery(self, startSearchNode, start, stop):
+    def rangeQuery(self, startSearchNode, start, stop, add_sleep=False):
         nodesOfInterest = []
         # Set the first node
-        nodesOfInterest.append(startSearchNode.findSuccesor(start))
+        nodesOfInterest.append(startSearchNode.findSuccesor(start, add_sleep))
 
         if start > stop:           # Set the rest of nodes if query surpasses max cord size
             while(nodesOfInterest[-1].getId() <= self.chordSize):
@@ -290,14 +294,14 @@ class Chord:
         
         return data_of_interest
 
-    def kNNQuery(self, startSearchNode, hash_key, k):    
+    def kNNQuery(self, startSearchNode, hash_key, k, add_sleep=False):
         
         allNeighbors = []
         nearestNeighbors = []
 
         # First fetching the nodes of the hash_key successor
         # and its predecessor
-        baseNode = startSearchNode.findSuccesor(hash_key)
+        baseNode = startSearchNode.findSuccesor(hash_key, add_sleep)
         allNeighbors.extend(baseNode.getData())
         allNeighbors.extend(baseNode.predecessor.getData())
         

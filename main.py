@@ -3,18 +3,18 @@ import pandas as pd
 
 
 def print_menu():
-
-    print("========== Chord-DHT MENU ==========")
-    print("1. Insert Node")
-    print("2. Delete Node")
-    print("3. Update Node")
-    print("4. Exact Match")
-    print("5. Range Query")
-    print("6. K-NN Query")
-    print("7. Insert Key")
-    print("8. Delete Key")
-    print("9. Print current state of Chord")
-    print("Press x to exit.")
+    print("=============== Chord-DHT MENU ===============")
+    print()
+    print("         1. Insert Node")
+    print("         2. Delete Node")
+    print("         3. Update Node")
+    print("         4. Exact Match")
+    print("         5. Range Query")
+    print("         6. K-NN Query")
+    print("         7. Insert Key")
+    print("         8. Delete Key")
+    print("         9. Print current state of Chord")
+    print("\nPress x to exit.")
 
 def print_current_state(chord):
     template = "{0:25} {1:25} {2:30} {3:25}"
@@ -57,6 +57,7 @@ def main():
 
     # Create nodes
     for i in range(number_of_nodes):
+        Utils.print_progress_bar(iteration=i+1, total=number_of_nodes, prefix="Creating Chord: ", suffix="Complete", length=75)
         newNode = Node.Node(Utils.generateIp(myChord.nodes))
         myChord.nodeJoin(newNode)
 

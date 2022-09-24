@@ -11,22 +11,17 @@ m = Utils.closest_power2_exponent(number_of_nodes)
 print('Creating Chord ...')
 myChord = Chord.Chord(m, redundancy_param)
 
-# List of all nodes created
-nodes = []
-
 # Creating nodes
-print('Creating and inserting nodes to Chord ...')
 for i in range(number_of_nodes):
-    newNode = Node.Node(Utils.generateIp(nodes))
-    nodes.append(newNode)
+    Utils.print_progress_bar(iteration=i+1, total=number_of_nodes, prefix="Creating Chord: ", suffix="Complete", length=75)
+    newNode = Node.Node(Utils.generateIp(myChord.getNodes()))
     myChord.nodeJoin(newNode)
 
 # Inserting data
 df = pd.read_csv('data/data.csv', low_memory=False)
 for idx, row in df.iterrows():
-    # startingNode = random.randint(0,number_of_nodes-1)
-    starting_node = 0
-    myChord.insertData(row, starting_node)
+    starting_nodeId = 0
+    myChord.insertData(row, starting_nodeId)
     if idx == number_of_data:
         break
     Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75)

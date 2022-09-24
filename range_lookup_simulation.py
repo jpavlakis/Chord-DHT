@@ -1,5 +1,3 @@
-#TODO: Change in order to make range queries
-
 import pandas as pd
 import random
 import datetime
@@ -9,69 +7,62 @@ from classes import Chord, Node, Utils
 
 #General Configuration
 redundancy_param = 0
-
 number_of_data = 1_000
-number_of_samples_per_nodes = 100
-
-min_m = 4
-max_m = 8
-
+total_lookups = 100
+min_m, max_m = 4, 8
+min_range, max_range = 2, 20
 avg_times = []
 
-for m in range(min_m, max_m):
-    
+for avg_times_idx, query_range in enumerate(range(min_range, max_range, 4)):
 
-    print(f'Value of m: {m}')
-    
-    # List of all nodes created
-    nodes = []
+    print(f'\n\nProccess Started for range: {query_range}')
 
-    # Creating Chord
-    print('Creating Chord ...')
-    myChord = Chord.Chord(m, redundancy_param)
+    avg_times.append(None)
+    avg_times[avg_times_idx] = []
 
-    # The number of nodes fill 50% of the overall capacity
-    number_of_nodes = 2**(m-1)
+    for m in range(min_m, max_m):
 
-    print('Creating and inserting nodes to Chord ...')
-    for i in range(number_of_nodes):
-        Utils.print_progress_bar(iteration=i+1, total=number_of_nodes, prefix="Creating Chord: ", suffix="Complete", length=75)
-        newNode = Node.Node(Utils.generateIp(myChord.nodes))
-        nodes.append(newNode)
+        print(f'Value of m: {m}')
 
-    # Creating the finger tables ones
-    myChord.massiveNodesJoin(nodes)
+        # Creating Chord
+        myChord = Chord.Chord(m, redundancy_param)
 
-    # Inserting data
-    df = pd.read_csv('data/data.csv', low_memory=False)
-    for idx, row in df.iterrows():
-        starting_node = 0
-        myChord.insertData(row, starting_node)
-        if idx == number_of_data:
-            break
-        Utils.print_progress_bar(iteration=idx+1, total=number_of_data, prefix="Inserting data: ", suffix="Complete", length=75)
-    
-    # Create empty datetime object to store total time
-    # consumed in queries for the certain m iteration
-    total_time = datetime.datetime.now() - datetime.datetime.now()
+        # The number of nodes fill 50% of the overall capacity
+        number_of_nodes = 2**(m-1)
 
-    for idx, row in df.iterrows():
-        if idx == number_of_samples_per_nodes:
-            break
+        for i in range(number_of_nodes):
+            newNode = Node.Node(Utils.generateIp(myChord.getNodes()))
+            myChord.nodeJoin(newNode)
 
-        #TODO: Add for loop to iterate k
-        #TODO: Find a way to plot the data
+        # Inserting data
+        df = pd.read_csv('data/data.csv', low_memory=False)
+        for idx, row in df.iterrows():
+            starting_node = 0
+            myChord.insertData(row, starting_node)
+            if idx == number_of_data:
+                break
 
-        startingNode = random.randint(0, number_of_nodes-1)
-        start = datetime.datetime.now()
-        result, _ = myChord.exactMatch(row['AttainmentId'], startingNode, add_sleep=True)
-        end = datetime.datetime.now()
-        total_time = total_time +  end - start
-    
-    avg_total_time = total_time / number_of_samples_per_nodes
-    avg_times.append(avg_total_time.microseconds)
-    print(f'Avarage Time: {avg_total_time.microseconds}')
-    print('\n\n')
+        # Create empty datetime object to store total time
+        # consumed in queries for the certain m iteration
+        total_time = datetime.datetime.now() - datetime.datetime.now()
+        max_nodeId = max(myChord.getIdList())
+        for idx, row in df.iterrows():
+            if idx == total_lookups:
+                break
+
+            startingNode = random.choice(myChord.getNodes())
+            start_value = random.randint(0, max_nodeId // 2)
+            stop_value = start_value + query_range
+            stop_value = stop_value if stop_value < max_nodeId else max_nodeId
+
+            start = datetime.datetime.now()
+            result = myChord.rangeQuery(startingNode, start_value, stop_value, add_sleep=True)
+            end = datetime.datetime.now()
+            total_time = total_time +  end - start
+        
+        avg_total_time = total_time / total_lookups
+        avg_times[avg_times_idx].append(avg_total_time.microseconds)
+        print(f'Avarage Lookup Time: {avg_total_time.microseconds}')
 
 
 # Creating Plot
@@ -79,7 +70,10 @@ plt.style.use('seaborn')
 fig, ax = plt.subplots()
 fig.set_size_inches(8.5, 5)
 
-ax.plot(range(min_m,max_m), avg_times, color='r', label='Avarage Lookup Time')
+colors = ['tab:red', 'tab:blue', 'tab:green', 'tab:orange', 'tab:cyan', 'tab:purple', 'tab:gray']
+
+for avg_times_idx, query_range in enumerate(range(min_range, max_range, 4)):
+    ax.plot(range(min_m, max_m), avg_times[avg_times_idx], color=colors[avg_times_idx], label=f'Query range: {query_range}')
 
 ax.set_xlabel('m')
 ax.set_ylabel('Avarage lookup time (μs)')

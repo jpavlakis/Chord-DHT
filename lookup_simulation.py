@@ -7,20 +7,13 @@ from classes import Chord, Node, Utils
 
 #General Configuration
 redundancy_param = 0
-
 total_lookups = 100
-
 min_m, max_m = 4, 8
-
 avg_times = []
 
 for m in range(min_m, max_m):
     
-
     print(f'Value of m: {m}')
-    
-    # List of all nodes created
-    nodes = []
 
     # Creating Chord
     print('Creating Chord ...')
@@ -29,14 +22,10 @@ for m in range(min_m, max_m):
     # The number of nodes fill 50% of the overall capacity
     number_of_nodes = 2**(m-1)
 
-    print('Creating and inserting nodes to Chord ...')
     for i in range(number_of_nodes):
         Utils.print_progress_bar(iteration=i+1, total=number_of_nodes, prefix="Creating Chord: ", suffix="Complete", length=75)
-        newNode = Node.Node(Utils.generateIp(myChord.nodes))
-        nodes.append(newNode)
-
-    # Creating the finger tables ones
-    myChord.massiveNodesJoin(nodes)
+        newNode = Node.Node(Utils.generateIp(myChord.getNodes()))
+        myChord.nodeJoin(newNode)
 
     df = pd.read_csv('data/data.csv', low_memory=False)
     
@@ -48,9 +37,9 @@ for m in range(min_m, max_m):
         if idx == total_lookups:
             break
 
-        startingNode = random.randint(0, number_of_nodes-1)
+        starting_nodeId = random.randint(0, number_of_nodes-1)
         start = datetime.datetime.now()
-        result, _ = myChord.exactMatch(row['AttainmentId'], startingNode, add_sleep=True)
+        result, _ = myChord.exactMatch(row['AttainmentId'], starting_nodeId, add_sleep=True)
         end = datetime.datetime.now()
         total_time = total_time +  end - start
     
