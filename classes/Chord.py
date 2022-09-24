@@ -74,16 +74,13 @@ class Chord:
         targetNode = self.nodes[self.getIndexFromId(nodeId)]
         
         # Delete from target node
-        previous_data_len = len(targetNode.getData())
         targetNode.data.remove(result)
-        new_data_len = len(targetNode.getData())
 
         # If data stored as backup, delete it
         if result in targetNode.fingerTable.successors[0].getBackupData():
             targetNode.fingerTable.successors[0].backupData.remove(result)
         
-        print(f'\nKey {data_key} has been deleted from node {targetNode.getId()}.')
-        print(f'Previous Data count: {previous_data_len} \t New Data count: {new_data_len}')
+        print(f'\nKey {data_key} has been deleted from node {targetNode.getId()}')
 
     
     def updateRecord(self, key):

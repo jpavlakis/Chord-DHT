@@ -8,11 +8,11 @@ def print_menu():
     print("         1. Insert Node")
     print("         2. Delete Node")
     print("         3. Update Node")
-    print("         4. Exact Match")
-    print("         5. Range Query")
-    print("         6. K-NN Query")
-    print("         7. Insert Key")
-    print("         8. Delete Key")
+    print("         4. Insert Key")
+    print("         5. Delete Key")
+    print("         6. Exact Match")
+    print("         7. Range Query")
+    print("         8. K-NN Query")
     print("         9. Print current state of Chord")
     print("\nPress x to exit.")
 
@@ -64,7 +64,7 @@ def main():
     print_current_state(myChord)
 
 
-    input("\n\nPress any key to continue for data insertion...")
+    input("\n\nPress any key to continue for data insertion...\n")
 
     # === Inserting Data
 
@@ -87,14 +87,12 @@ def main():
 
     while choice != 'x':
         if choice == '1':
-            print('\nNode Insertion initiated')
+            print('\nNode Insertion initiated\n')
             if len(myChord.nodes) >= 2**m:
                 print(f"\nMaximum number of nodes ({2**m}) for given m ({m}) is reached. No more nodes can be added to the Chord network.")
             else:
                 newNode = Node.Node(Utils.generateIp(myChord.nodes))
                 print(f"A new node has been generated with IP: {newNode.getIpAddress()}")
-                print("\nNode Insertion ...")
-                print("Updating finger tables...")
                 myChord.nodeJoin(newNode)
                 print(f"New node ID: {newNode.getId()}")
                 print("New chord structure:")
@@ -120,6 +118,25 @@ def main():
             myChord.updateRecord(update_key)
 
         elif choice == '4':
+            print('\nKey Insertion initiated')
+            key_to_insert = input("Give new key to insert: ")
+            print("Inserting key ...")
+            myChord.insertKey(key_to_insert, 0)
+
+        elif choice == '5':
+            print('\nKey Deletion initiated')
+            print('Examples of existing keys:')
+            for idx, row in df.iterrows():
+                starting_node = 0
+                print(row['AttainmentId'])
+                if idx==2:
+                    break
+            
+            key_to_delete = input("Give key to delete: ")
+            print("Deleting key ...")
+            myChord.deleteKey(key_to_delete)
+        
+        elif choice == '6':
             print('\nExact Match Query initiated')
             print('Examples of existing keys:')
             for idx, row in df.iterrows():
@@ -134,8 +151,8 @@ def main():
                 print(f"\nKey {search_key} found in node {nodeId} with data:\n\n{result}")
             else:
                 print(f'\nThere are no entries with ID {search_key} found.')
-
-        elif choice == '5':
+            
+        elif choice == '7':
             print('\nRange Query initiated')
             starting_key = input("Give starting hash key: ")
             ending_key   = input("Give ending hash key:   ")
@@ -143,8 +160,8 @@ def main():
             returned_data = myChord.rangeQuery(myChord.nodes[0], int(starting_key), int(ending_key))
             print("\nResults:\n")
             print_query_results(returned_data)
-        
-        elif choice == '6':
+
+        elif choice == '8':
             print('\nkNN Query initiated')
             reference_key = input("\nGive reference hash key: ")
             nearest_neighbors_num = input("Give number of Nearest Neighbors: ")
@@ -155,25 +172,6 @@ def main():
                 print_query_results(nearest_neighbors)
             else:
                 print("Please provide a smaller amount of NNs for the kNN query to work properly")
-            
-        elif choice == '7':
-            print('\nKey Insertion initiated')
-            key_to_be_added = input("Give new key to add: ")
-            print("Inserting key ...")
-            myChord.insertKey(key_to_be_added, 0)
-
-        elif choice == '8':
-            print('\nKey Deletion initiated')
-            print('Examples of existing keys:')
-            for idx, row in df.iterrows():
-                starting_node = 0
-                print(row['AttainmentId'])
-                if idx==2:
-                    break
-            
-            key_to_be_deleted = input("Give key to delete: ")
-            print("Deleting key ...")
-            myChord.deleteKey(key_to_be_deleted)
 
         elif choice == '9':
             print_current_state(myChord)
