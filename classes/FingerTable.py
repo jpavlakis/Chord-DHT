@@ -3,7 +3,6 @@ class FingerTable:
         self.successors = []
         self.chord = chord
         self.node = node
-        self.chordSize = chord.chordSize
         
     def updateFingerTable(self):
 
@@ -18,11 +17,11 @@ class FingerTable:
                 self.successors.append(self.node)
         else:
             for i in range(self.chord.m):
-                wantedSucccesorId = (newNodeId + ( 1 << i )) % self.chordSize
+                wantedSucccesorId = (newNodeId + 2**i) % self.chord.chordSize
                 wantedSucccesorIndex = 0
                 while chordNodesID[wantedSucccesorIndex % num_of_nodes] < wantedSucccesorId:
-                    if (wantedSucccesorIndex / num_of_nodes) >= 1 and (chordNodesID[wantedSucccesorIndex % num_of_nodes] + self.chordSize) >= wantedSucccesorId:
-                        wantedSucccesorIndex = wantedSucccesorIndex % num_of_nodes
+                    if (wantedSucccesorIndex / num_of_nodes) >= 1 and (chordNodesID[wantedSucccesorIndex % num_of_nodes] + self.chord.chordSize) >= wantedSucccesorId:
+                        wantedSucccesorIndex %= num_of_nodes
                         break
                     wantedSucccesorIndex += 1
                 self.successors.append(self.chord.nodes[wantedSucccesorIndex])

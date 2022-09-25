@@ -27,7 +27,7 @@ class Node:
     def finger(self, i):
         return self.fingerTable.getSuccessors()[i]
 
-    def findSuccesor(self, looking_id, add_sleep=False):
+    def findSuccessor(self, looking_id, add_sleep=False):
 
         offset = 2**self.m
 
@@ -35,14 +35,13 @@ class Node:
             return self
 
         # The looking ID is after the chord zero needs an offset.
-        looking_id_offseted = looking_id
         if looking_id < self.id:
-            looking_id_offseted+=offset
+            looking_id_offseted = looking_id + offset
 
         # If current Finger Table Node is after the chord zero, offset is needed.
         current_fingerTable_nodeId = self.fingerTable.successors[0].id
         if current_fingerTable_nodeId < self.id:
-            current_fingerTable_nodeId+=offset
+            current_fingerTable_nodeId += offset
 
         if current_fingerTable_nodeId >= looking_id_offseted:
             #print('First Element Bigger, goes to the next node.')
@@ -54,12 +53,12 @@ class Node:
                 sleep(0.001)
             # If current Finger Table Node is after the chord zero, offset is needed.
             if(fingerTable_node.id < self.id):
-                current_fingerTable_nodeId+=offset
+                current_fingerTable_nodeId += offset
 
             if looking_id_offseted <= current_fingerTable_nodeId:
-                return self.fingerTable.successors[index-1].findSuccesor(looking_id)
+                return self.fingerTable.successors[index-1].findSuccessor(looking_id)
         else:
-            return self.fingerTable.successors[-1].findSuccesor(looking_id)
+            return self.fingerTable.successors[-1].findSuccessor(looking_id)
 
 
     def updatePredeccessorFingerTable(self, chord):

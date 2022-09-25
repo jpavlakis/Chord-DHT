@@ -45,7 +45,7 @@ for m in range(min_m, max_m):
     
     avg_total_time = total_time / total_lookups
     avg_times.append(avg_total_time.microseconds)
-    print(f'Avarage Time: {avg_total_time.microseconds}')
+    print(f'Avarage Time: {avg_total_time.microseconds} μs')
     print('\n\n')
 
 

@@ -6,7 +6,7 @@ class Chord:
     def __init__(self, m, redundancy_param):
         self.m = m
         self.redundancy_param = redundancy_param
-        self.chordSize = 1 << m # 2^m
+        self.chordSize = 2**m
         self.nodes = []
 
     def insertData(self, row, index):
@@ -16,7 +16,7 @@ class Chord:
         # Building our data structur
         data = row.to_dict()
         data['hash_key'] = key
-        targetNode = self.nodes[index].findSuccesor(key)
+        targetNode = self.nodes[index].findSuccessor(key)
         targetNode.data.append(data)
 
         # Failure prevention mechanism
@@ -40,7 +40,7 @@ class Chord:
         data['AttainmentId'] = data_key
         data['hash_key'] = Utils.generateHash(data_key, self.m)
         
-        targetNode = self.nodes[index].findSuccesor(data['hash_key'])
+        targetNode = self.nodes[index].findSuccessor(data['hash_key'])
 
         for entry in targetNode.getData():
             if entry['AttainmentId'] == data_key:
@@ -90,7 +90,7 @@ class Chord:
 
         # Select random node to begin search
         random_nodeId = randint(0, len(self.nodes))
-        targetNode = self.nodes[random_nodeId].findSuccesor(hashed_key)
+        targetNode = self.nodes[random_nodeId].findSuccessor(hashed_key)
 
         if(not targetNode.hasFailed):
             for data_entry in targetNode.getData():
@@ -229,7 +229,7 @@ class Chord:
 
         # Select a random node to start search
         # Currently we use the first one
-        targetNode = self.nodes[startingNode].findSuccesor(hashed_key, add_sleep)
+        targetNode = self.nodes[startingNode].findSuccessor(hashed_key, add_sleep)
 
         node_hasFailed = False
         if(targetNode.hasFailed):
@@ -262,29 +262,29 @@ class Chord:
     def rangeQuery(self, startSearchNode, start, stop, add_sleep=False):
         nodesOfInterest = []
         # Set the first node
-        nodesOfInterest.append(startSearchNode.findSuccesor(start, add_sleep))
+        firstNode = startSearchNode.findSuccessor(start, add_sleep)
+        lastNode  = startSearchNode.findSuccessor(stop, add_sleep)
+        nodesOfInterest.append(firstNode)
 
-        if start > stop:           # Set the rest of nodes if query surpasses max cord size
-            while(nodesOfInterest[-1].getId() <= self.chordSize):
-                nodesOfInterest.append(nodesOfInterest[-1].finger(0))
-            while(nodesOfInterest[-1].getId() <= stop):
-                nodesOfInterest.append(nodesOfInterest[-1].finger(0))
-        else:                    # Set the rest of nodes for normal query
-            while(nodesOfInterest[-1].getId() < stop):
-                nodesOfInterest.append(nodesOfInterest[-1].finger(0))
+        while (nodesOfInterest[-1].getId() != lastNode.getId()):
+            nodesOfInterest.append(nodesOfInterest[-1].finger(0))
 
-        # Initialize list with data to return
         data_of_interest = []
 
         # First node
+        # Return only those whose hash key
+        # is in the correct range of values
         for record in nodesOfInterest[0].getData():
             if record['hash_key'] >= start and record['hash_key'] <= stop:
                 data_of_interest.append(record)
-        # Middle nodes  
+        # Middle nodes
+        # Return the all their data  
         for node in nodesOfInterest[1:-2]:
                 data_of_interest.append(node.getData())
         
         # Last node
+        # Return only those whose hash key
+        # is in the correct range of values
         for record in nodesOfInterest[-1].getData():
             if record['hash_key'] >= start and record['hash_key'] <= stop:
                 data_of_interest.append(record)
@@ -298,7 +298,7 @@ class Chord:
 
         # First fetching the nodes of the hash_key successor
         # and its predecessor
-        baseNode = startSearchNode.findSuccesor(hash_key, add_sleep)
+        baseNode = startSearchNode.findSuccessor(hash_key, add_sleep)
         allNeighbors.extend(baseNode.getData())
         allNeighbors.extend(baseNode.predecessor.getData())
         

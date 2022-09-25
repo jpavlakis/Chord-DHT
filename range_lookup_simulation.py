@@ -46,9 +46,7 @@ for avg_times_idx, query_range in enumerate(range(min_range, max_range, 4)):
         # consumed in queries for the certain m iteration
         total_time = datetime.datetime.now() - datetime.datetime.now()
         max_nodeId = max(myChord.getIdList())
-        for idx, row in df.iterrows():
-            if idx == total_lookups:
-                break
+        for _ in range(total_lookups):
 
             startingNode = random.choice(myChord.getNodes())
             start_value = random.randint(0, max_nodeId // 2)
@@ -62,7 +60,7 @@ for avg_times_idx, query_range in enumerate(range(min_range, max_range, 4)):
         
         avg_total_time = total_time / total_lookups
         avg_times[avg_times_idx].append(avg_total_time.microseconds)
-        print(f'Avarage Lookup Time: {avg_total_time.microseconds}')
+        print(f'Avarage Lookup Time: {avg_total_time.microseconds} μs')
 
 
 # Creating Plot
@@ -77,7 +75,7 @@ for avg_times_idx, query_range in enumerate(range(min_range, max_range, 4)):
 
 ax.set_xlabel('m')
 ax.set_ylabel('Avarage lookup time (μs)')
-ax.set_title('Avarage lookup time per m value')
+ax.set_title('Avarage Range Query lookup time per m value')
 plt.legend()
 plt.tight_layout()
 plt.show()
