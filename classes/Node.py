@@ -34,6 +34,7 @@ class Node:
         if looking_id == self.id:
             return self
 
+        looking_id_offseted = looking_id + 0
         # The looking ID is after the chord zero needs an offset.
         if looking_id < self.id:
             looking_id_offseted = looking_id + offset
@@ -87,9 +88,3 @@ class Node:
     def getBackupData(self):
         return self.backupData
 
-    # Returns a string with all the values of a specific 
-    # key from all the data stored in that node
-    # Useful for debugging and demo purposes
-    def getDataAttributeString(self, key):
-        data_values = [str(data_entry[key] for data_entry in self.data)]
-        return ', '.join(data_values)

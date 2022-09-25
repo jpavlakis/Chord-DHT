@@ -34,6 +34,12 @@ def generateHash(value, m):
     hashed_ip_bin = bin(int(hashed_ip_hex, 16))
     return int(hashed_ip_bin[-m:], 2)
 
+def closest_power2_exponent(x):
+    """
+    Returns the exponent of the closest power of 2 to the input x
+    """
+    return math.ceil(math.log(x,2))
+
 def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = '\r'):
     """
     Call in a loop to create terminal progress bar
@@ -44,10 +50,4 @@ def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1
     print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
     if iteration == total:
         print()
-
-def closest_power2_exponent(x):
-    """
-    Returns the exponent of the closest power of 2 to the input x
-    """
-    return math.ceil(math.log(x,2))
 

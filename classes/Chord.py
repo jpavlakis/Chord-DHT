@@ -3,9 +3,9 @@ from classes import Utils
 from random import randint
 
 class Chord:
-    def __init__(self, m, redundancy_param):
+    def __init__(self, m, redundancyParam):
         self.m = m
-        self.redundancy_param = redundancy_param
+        self.redundancyParam = redundancyParam
         self.chordSize = 2**m
         self.nodes = []
 
@@ -22,11 +22,11 @@ class Chord:
         # Failure prevention mechanism
         # Adding redundancy of keys to the successor of the node
         current_node = targetNode
-        for i in range(self.redundancy_param):
+        for i in range(self.redundancyParam):
             nextNode = current_node.fingerTable.successors[0]
 
             #if its the first time create it with append else override
-            if len(nextNode.getBackupData()) < self.redundancy_param:
+            if len(nextNode.getBackupData()) < self.redundancyParam:
                 nextNode.backupData.append(targetNode.getData().copy())
             else:
                 nextNode.getBackupData()[i] = targetNode.getData().copy()
@@ -52,11 +52,11 @@ class Chord:
         # Failure prevention mechanism
         # Adding redundancy of keys to the first successor of the node
         currentNode = targetNode
-        for i in range(self.redundancy_param):
+        for i in range(self.redundancyParam):
             nextNode = currentNode.fingerTable.successors[0]
 
             #if its the first time create it with append else override
-            if len(nextNode.getBackupData()) < self.redundancy_param:
+            if len(nextNode.getBackupData()) < self.redundancyParam:
                 nextNode.backupData.append(targetNode.getData().copy())
             else:
                 nextNode.getBackupData()[i] = targetNode.getData().copy()
@@ -89,7 +89,7 @@ class Chord:
         print(f'The hash of the given key is: {hashed_key}')
 
         # Select random node to begin search
-        random_nodeId = randint(0, len(self.nodes))
+        random_nodeId = randint(0, len(self.nodes)-1)
         targetNode = self.nodes[random_nodeId].findSuccessor(hashed_key)
 
         if(not targetNode.hasFailed):
@@ -177,32 +177,6 @@ class Chord:
         for dataForRemoval in data_to_be_removed:
             firstSuccessor.data.remove(dataForRemoval)
 
-    # Used when we only want to create the 
-    # finger tables at the end when all the nodes
-    # are inserted.
-    def massiveNodesJoin(self, nodes):
-
-        for idx, node in enumerate(nodes):
-            Utils.print_progress_bar(iteration=idx+1, total=len(nodes), prefix="Massive node join: ", suffix="Complete", length=75)
-            # Create node ID for the given Chord
-            node.setId(self.m)
-            
-            # Making sure that we don't have double ids
-            while node.getId() in (chord_node.getId() for chord_node in self.nodes):
-                node.id = (node.id + 1) % 2**self.m
-
-            # Insert ordered in Node's list 
-            self.nodes.append(node)
-            self.nodes.sort(key=lambda x: x.getId())
-
-            # Create Finger Table 
-            node.setFingerTable(FingerTable.FingerTable(self, node))
-
-        # Find nodes that need Finger Table update
-        for idx, chordNode in enumerate(self.nodes):
-            Utils.print_progress_bar(iteration=idx+1, total=len(self.nodes), prefix="Updating finger tables: ", suffix="Complete", length=75)
-            chordNode.updatePredeccessorFingerTable(self)
-
     def nodeLeave(self, node_to_remove_ID): 
         node_index = self.getIndexFromId(node_to_remove_ID)
         node_to_remove_ID = int(node_to_remove_ID)
@@ -245,7 +219,7 @@ class Chord:
     
         # Node failure handling mechanism
         if(node_hasFailed):
-            for i in range(self.redundancy_param):
+            for i in range(self.redundancyParam):
                 if(targetNode.hasFailed):
                     # Taking the next node
                     targetNode = targetNode.fingerTable.successors[0]
@@ -262,6 +236,10 @@ class Chord:
     def rangeQuery(self, startSearchNode, start, stop, add_sleep=False):
         nodesOfInterest = []
         # Set the first node
+        if start >= self.chordSize or stop >= self.chordSize:
+            print('Given starting or ending value is out of range of the possible Chord IDs.')
+            return []
+
         firstNode = startSearchNode.findSuccessor(start, add_sleep)
         lastNode  = startSearchNode.findSuccessor(stop, add_sleep)
         nodesOfInterest.append(firstNode)
@@ -293,6 +271,10 @@ class Chord:
 
     def kNNQuery(self, startSearchNode, hash_key, k, add_sleep=False):
         
+        if hash_key >= self.chordSize:
+            print('Given reference key is out of range of the possible Chord IDs.')
+            return []
+
         allNeighbors = []
         nearestNeighbors = []
 

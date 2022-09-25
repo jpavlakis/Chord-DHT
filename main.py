@@ -7,9 +7,9 @@ def print_menu():
     print()
     print("         1. Insert Node")
     print("         2. Delete Node")
-    print("         3. Update Node")
-    print("         4. Insert Key")
-    print("         5. Delete Key")
+    print("         3. Insert Key")
+    print("         4. Delete Key")
+    print("         5. Update Record")
     print("         6. Exact Match")
     print("         7. Range Query")
     print("         8. K-NN Query")
@@ -29,10 +29,10 @@ def print_current_state(chord):
     print('-' * table_length)
 
 def print_query_results(data):
-    template = "{0:25} {1:8}"
-    table_length = 34
+    template = "{0:25} {1:14}"
+    table_length = 39
     print('-' * table_length)
-    print(template.format("Data Hash Key", "Entry ID"))
+    print(template.format("Entry ID", "Data Hash Key"))
     print('-' * table_length)
 
     for data_entry in data:
@@ -95,7 +95,7 @@ def main():
                 print(f"A new node has been generated with IP: {newNode.getIpAddress()}")
                 myChord.nodeJoin(newNode)
                 print(f"New node ID: {newNode.getId()}")
-                print("New chord structure:")
+                print("New Chord structure:")
                 print_current_state(myChord)
 
 
@@ -103,10 +103,28 @@ def main():
             print('\nNode Deletion initiated')
             nodeId_to_delete = input('\nGive the ID of the node you want to delete: ')
             myChord.nodeLeave(nodeId_to_delete)
-            print("New chord structure:")
+            print("New Chord structure:")
             print_current_state(myChord)
 
         elif choice == '3':
+            print('\nKey Insertion initiated')
+            key_to_insert = input("Give new key to insert: ")
+            print("Inserting key ...")
+            myChord.insertKey(key_to_insert, 0)
+
+        elif choice == '4':
+            print('\nKey Deletion initiated\n')
+            print('Examples of existing keys:')
+            for idx, row in df.iterrows():
+                starting_node = 0
+                print(row['AttainmentId'])
+                if idx==2:
+                    break
+            
+            key_to_delete = input("\nGive key to delete: ")
+            myChord.deleteKey(key_to_delete)
+
+        elif choice == '5':
             print('\nNode Update initiated')
             print('Examples of existing keys:')
             for idx, row in df.iterrows():
@@ -116,28 +134,9 @@ def main():
                     break
             update_key = input("\n\nGive the key of the record you want to update: ")
             myChord.updateRecord(update_key)
-
-        elif choice == '4':
-            print('\nKey Insertion initiated')
-            key_to_insert = input("Give new key to insert: ")
-            print("Inserting key ...")
-            myChord.insertKey(key_to_insert, 0)
-
-        elif choice == '5':
-            print('\nKey Deletion initiated')
-            print('Examples of existing keys:')
-            for idx, row in df.iterrows():
-                starting_node = 0
-                print(row['AttainmentId'])
-                if idx==2:
-                    break
-            
-            key_to_delete = input("Give key to delete: ")
-            print("Deleting key ...")
-            myChord.deleteKey(key_to_delete)
         
         elif choice == '6':
-            print('\nExact Match Query initiated')
+            print('\nExact Match Query initiated\n')
             print('Examples of existing keys:')
             for idx, row in df.iterrows():
                 starting_node = 0
