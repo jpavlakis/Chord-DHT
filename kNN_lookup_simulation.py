@@ -49,7 +49,7 @@ for avg_times_idx, k in enumerate(range(min_k, max_k, 2)):
         for _ in range(total_lookups):
 
             startingNode = random.choice(myChord.getNodes())
-            hash_key = Utils.generateHash(row['AttainmentId'], myChord.m)
+            hash_key = random.randint(0, 2**m - 1)
             start = datetime.datetime.now()
             result = myChord.kNNQuery(startingNode, hash_key, k, add_sleep=True)
             end = datetime.datetime.now()

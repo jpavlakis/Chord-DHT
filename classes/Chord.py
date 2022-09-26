@@ -199,7 +199,6 @@ class Chord:
     def exactMatch(self, data_key, startingNode=0, add_sleep=False):
         # Hash the data key
         hashed_key = Utils.generateHash(data_key, self.m)
-        #print('The hash of the given key is: ',hashedKey)
 
         # Select a random node to start search
         # Currently we use the first one
@@ -216,7 +215,6 @@ class Chord:
                 if data_entry['hash_key'] == hashed_key and data_entry['AttainmentId'] == data_key:
                     return data_entry, targetNode.getId()
 
-    
         # Node failure handling mechanism
         if(node_hasFailed):
             for i in range(self.redundancyParam):
@@ -283,6 +281,7 @@ class Chord:
         baseNode = startSearchNode.findSuccessor(hash_key, add_sleep)
         allNeighbors.extend(baseNode.getData())
         allNeighbors.extend(baseNode.predecessor.getData())
+        allNeighbors.extend(baseNode.finger(0).getData())
         
         if(len(allNeighbors) < k):
             return False

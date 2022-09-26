@@ -107,7 +107,7 @@ def main():
             print_current_state(myChord)
 
         elif choice == '3':
-            print('\nKey Insertion initiated')
+            print('\nKey Insertion initiated\n')
             key_to_insert = input("Give new key to insert: ")
             print("Inserting key ...")
             myChord.insertKey(key_to_insert, 0)
@@ -125,7 +125,7 @@ def main():
             myChord.deleteKey(key_to_delete)
 
         elif choice == '5':
-            print('\nNode Update initiated')
+            print('\nNode Update initiated\n')
             print('Examples of existing keys:')
             for idx, row in df.iterrows():
                 starting_node = 0
@@ -152,7 +152,7 @@ def main():
                 print(f'\nThere are no entries with ID {search_key} found.')
             
         elif choice == '7':
-            print('\nRange Query initiated')
+            print('\nRange Query initiated\n')
             starting_key = input("Give starting hash key: ")
             ending_key   = input("Give ending hash key:   ")
             
